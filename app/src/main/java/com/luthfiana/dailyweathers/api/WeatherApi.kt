@@ -6,11 +6,18 @@ import retrofit2.http.Query
 
 interface WeatherApi {
 
-    // Endpoint OpenWeather untuk current weather
     @GET("data/2.5/weather")
     suspend fun getWeather(
         @Query("q") city: String,
         @Query("appid") apiKey: String,
-        @Query("units") units: String = "metric" // untuk mendapatkan suhu dalam Celsius
+        @Query("units") units: String = "metric"
     ) : Response<WeatherModel>
+
+    @GET("data/2.5/forecast")
+    suspend fun getForecast(
+        @Query("q") city: String,
+        @Query("appid") apiKey: String,
+        @Query("units") units: String = "metric",
+        @Query("cnt") count: Int = 40
+    ) : Response<ForecastResponse>
 }
