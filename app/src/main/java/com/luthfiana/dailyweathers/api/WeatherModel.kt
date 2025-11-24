@@ -17,9 +17,14 @@ data class WeatherModel(
     val coord: Coord
 )
 
+// Di file WeatherModel.kt (api package)
 data class Sys(
     @SerializedName("country")
-    val country: String
+    val country: String,
+    @SerializedName("sunrise")
+    val sunrise: Long = 0L, // Default value
+    @SerializedName("sunset")
+    val sunset: Long = 0L   // Default value
 )
 
 data class Main(

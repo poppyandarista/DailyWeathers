@@ -1,0 +1,148 @@
+<resources>
+    <string name="app_name">Daily Weather</string>
+    <string name="location">Location</string>
+    <string name="search">Search</string>
+    <string name="refresh">Refresh</string>
+    <string name="today">Today</string>
+    <string name="tomorrow">Tomorrow</string>
+    <string name="weather_forecast">Weather Forecast</string>
+    <string name="high">High</string>
+    <string name="low">Low</string>
+    <string name="humidity">Humidity</string>
+    <string name="veryhigh">Very High</string>
+    <string name="extrem">Extreme</string>
+    <string name="wind">Wind</string>
+    <string name="rain">Rain</string>
+    <string name="feels_like">Feels Like</string>
+    <string name="air_quality">Air Quality</string>
+    <string name="uv_index">UV Index</string>
+    <string name="sunrise">Sunrise</string>
+    <string name="sunset">Sunset</string>
+    <string name="moon_info">Moon Information</string>
+    <string name="moon_rise">Moonrise</string>
+    <string name="moon_set">Moonset</string>
+    <string name="moon_phase">Moon Phase</string>
+    <string name="running">Running</string>
+    <string name="cycling">Cycling</string>
+    <string name="gardening">Gardening</string>
+    <string name="good">Good</string>
+    <string name="fair">Fair</string>
+    <string name="poor">Poor</string>
+    <string name="excellent">Excellent</string>
+    <string name="search_location">Search Location</string>
+    <string name="enter_city_name">Enter city name…</string>
+    <string name="tap_outside_to_close">Tap outside to close</string>
+    <string name="loading_weather_data">Loading weather data…</string>
+    <string name="weather_data_unavailable">Weather data unavailable</string>
+    <string name="forecast_data_unavailable">Forecast data unavailable</string>
+    <string name="search_city_for_weather">Search city to view weather information</string>
+    <string name="clear_sky">Clear Sky</string>
+    <string name="few_clouds">Few Clouds</string>
+    <string name="scattered_clouds">Scattered Clouds</string>
+    <string name="broken_clouds">Broken Clouds</string>
+    <string name="overcast_clouds">Overcast Clouds</string>
+    <string name="light_rain">Light Rain</string>
+    <string name="moderate_rain">Moderate Rain</string>
+    <string name="heavy_rain">Heavy Rain</string>
+    <string name="thunderstorm">Thunderstorm</string>
+    <string name="snow">Snow</string>
+    <string name="mist">Mist</string>
+    <string name="precipitation_chance">Precipitation Chance</string>
+    <string name="your_location">Your Location</string>
+    <string name="unknown_error">Unknown error occurred</string>
+    <string name="daily_forecast">Daily Forecast</string>
+
+    <!-- Activity Conditions -->
+    <string name="now">Now</string>
+    <string name="temperature_template">Temperature %d°C</string>
+    <string name="humidity_template">humidity %d%%</string>
+    <string name="wind_template">wind %.1f km/h</string>
+    <string name="not_ideal_for_running">not ideal for running</string>
+    <string name="too_hot_for_running">too hot for running</string>
+    <string name="too_cold_for_running">too cold for running</string>
+    <string name="high_humidity_uncomfortable">high humidity uncomfortable</string>
+    <string name="ideal_for_running">ideal for running</string>
+    <string name="fair_for_running">fair for running</string>
+    <string name="rain_unsafe_for_cycling">rain unsafe for cycling</string>
+    <string name="strong_wind_dangerous">strong wind dangerous</string>
+    <string name="good_conditions_for_cycling">good conditions for cycling</string>
+    <string name="fair_conditions_for_cycling">fair conditions for cycling</string>
+    <string name="freezing_temperature_damages_plants">freezing temperature damages plants</string>
+    <string name="storm_can_damage_plants">storm can damage plants</string>
+    <string name="good_time_for_gardening">good time for gardening</string>
+    <string name="fair_conditions_for_gardening">fair conditions for gardening</string>
+
+    <!-- Weather Info Items -->
+    <string name="feels_like_tomorrow">Feels Like Tomorrow</string>
+    <string name="humidity_makes_feel_like">Humidity makes high temperature feel like %d°C</string>
+    <string name="air_humidity">Air Humidity</string>
+    <string name="humidity_reaches">Humidity reaches %d%%</string>
+    <string name="wind_speed">Wind Speed</string>
+    <string name="wind_blowing">Wind blowing %.1f m/s</string>
+    <string name="weather_condition">Weather Condition</string>
+        <!-- Add these missing strings -->
+        <string name="healthy">Healthy</string>
+        <string name="moderate">Moderate</string>
+        <string name="unhealthy_for_sensitive_groups">Unhealthy for Sensitive Groups</string>
+        <string name="unhealthy">Unhealthy</string>
+        <string name="very_dry">Very Dry</string>
+        <string name="comfortable">Comfortable</string>
+        <string name="high_humidity">High</string>
+        <string name="very_high_humidity">Very High</string>
+        <string name="stable">Stable</string>
+        <string name="currently_high">Currently high</string>
+        <string name="higher_than_yesterday">Higher than yesterday</string>
+        <string name="lower_than_yesterday">Lower than yesterday</string>
+        <string name="stable_like_yesterday">Stable like yesterday</string>
+
+        <!-- Air Quality Descriptions -->
+        <string name="air_quality_good">Good air quality for all groups</string>
+        <string name="air_quality_moderate">Fair air quality</string>
+        <string name="air_quality_unhealthy_sensitive">Sensitive groups may experience issues</string>
+        <string name="air_quality_unhealthy">Avoid prolonged outdoor activities</string>
+
+        <!-- Humidity Descriptions -->
+        <string name="humidity_very_dry">Very dry air, skin needs moisturizer</string>
+        <string name="humidity_comfortable">Ideal humidity level for comfort</string>
+        <string name="humidity_moderate">Humidity is fairly comfortable</string>
+        <string name="humidity_high">Humid air, feels somewhat stuffy</string>
+        <string name="humidity_very_high">Very humid air, uncomfortable</string>
+
+        <!-- UV Index Descriptions -->
+        <string name="uv_low">Safe without protection</string>
+        <string name="uv_moderate">Protection required</string>
+        <string name="uv_high">Extra protection advised</string>
+        <string name="uv_very_high">Avoid direct exposure</string>
+        <string name="uv_extreme">Dangerous, stay indoors</string>
+
+        <!-- Moon Phases -->
+        <string name="new_moon">New Moon</string>
+        <string name="waxing_crescent">Waxing Crescent</string>
+        <string name="first_quarter">First Quarter</string>
+        <string name="waxing_gibbous">Waxing Gibbous</string>
+        <string name="full_moon">Full Moon</string>
+        <string name="waning_gibbous">Waning Gibbous</string>
+        <string name="last_quarter">Last Quarter</string>
+        <string name="waning_crescent">Waning Crescent</string>
+
+    <string name="amantanpaperlindungan">Safe Without Protection</string>
+    <string name="saatinitinggi">Currently High</string>
+    <string name="lebihtinggidarikemarin">Higher Than Yesterday</string>
+    <string name="levelberbahaya">Dangerous Level</string>
+    <string name="lebihrendahdarikemarin">Lower Than Yesterday</string>
+    <string name="stabilsepertikemarin">Stable Like Yesterday</string>
+
+    <string name="sangatkering">Very Dry</string>
+    <string name="nyaman">Comfortable</string>
+    <string name="udarasangatkering">Very dry air, skin needs moisturizer</string>
+    <string name="tingkatkelembapan">Ideal humidity level for comfort</string>
+    <string name="kelembapancukupnyaman">Humidity is fairly comfortable</string>
+    <string name="udaralembab">Humid air, feels somewhat stuffy</string>
+    <string name="udarasangatlembab">Very humid air, uncomfortable</string>
+
+    <string name="running_description">Temperature %1$d°C, humidity %2$d%% - %3$s</string>
+    <string name="cycling_description">Temperature %1$d°C, wind %2$.1f km/h - %3$s</string>
+    <string name="gardening_description">Temperature %1$d°C, humidity %2$d%% - %3$s</string>
+
+
+</resources>

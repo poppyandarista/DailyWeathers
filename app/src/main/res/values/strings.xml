@@ -1,3 +1,151 @@
 <resources>
-    <string name="app_name">DailyWeathers</string>
+    <string name="app_name">Daily weather</string>
+    <string name="location">Lokasi</string>
+    <string name="search">Cari</string>
+    <string name="refresh">Muat ulang</string>
+    <string name="today">Hari ini</string>
+    <string name="tomorrow">Besok</string>
+    <string name="weather_forecast">Prediksi cuaca</string>
+    <string name="high">Tinggi</string>
+    <string name="low">Rendah</string>
+    <string name="humidity">Kelembapan</string>
+    <string name="wind">Angin</string>
+    <string name="rain">Hujan</string>
+    <string name="feels_like">Terasa seperti</string>
+    <string name="air_quality">Kualitas udara</string>
+    <string name="uv_index">Indeks UV</string>
+    <string name="sunrise">Fajar</string>
+    <string name="sunset">Senja</string>
+    <string name="moon_info">Informasi bulan</string>
+    <string name="moon_rise">Bulan terbit</string>
+    <string name="moon_set">Bulan terbenam</string>
+    <string name="moon_phase">Fase bulan</string>
+    <string name="running">Lari</string>
+    <string name="cycling">Sepeda</string>
+    <string name="gardening">Berkebun</string>
+    <string name="good">Baik</string>
+    <string name="fair">Sedang</string>
+    <string name="poor">Buruk</string>
+    <string name="excellent">Sangat baik</string>
+    <string name="search_location">Cari lokasi</string>
+    <string name="enter_city_name">Masukkan nama kota…</string>
+    <string name="tap_outside_to_close">Ketuk di luar area untuk menutup</string>
+    <string name="loading_weather_data">Memuat data cuaca…</string>
+    <string name="weather_data_unavailable">Data cuaca tidak tersedia</string>
+    <string name="forecast_data_unavailable">Data prediksi tidak tersedia</string>
+    <string name="search_city_for_weather">Cari kota untuk melihat informasi cuaca</string>
+
+    <string name="clear_sky">Cerah</string>
+    <string name="few_clouds">Sedikit berawan</string>
+    <string name="scattered_clouds">Berawan</string>
+    <string name="broken_clouds">Berawan tebal</string>
+    <string name="overcast_clouds">Mendung</string>
+    <string name="light_rain">Hujan ringan</string>
+    <string name="moderate_rain">Hujan sedang</string>
+    <string name="heavy_rain">Hujan lebat</string>
+    <string name="thunderstorm">Badai petir</string>
+    <string name="snow">Salju</string>
+    <string name="mist">Kabut</string>
+    <string name="precipitation_chance">Kemungkinan hujan</string>
+    <string name="your_location">Lokasi anda</string>
+    <string name="unknown_error">Terjadi kesalahan tidak diketahui</string>
+    <string name="daily_forecast">Perkiraan cuaca</string>
+
+    <!-- Activity Conditions -->
+    <string name="now">Sekarang</string>
+    <string name="temperature_template">Suhu %d°C</string>
+    <string name="humidity_template">Kelembapan %d%%</string>
+    <string name="wind_template">Angin %.1f km/jam</string>
+
+    <string name="not_ideal_for_running">Tidak ideal untuk lari</string>
+    <string name="too_hot_for_running">Terlalu panas untuk lari</string>
+    <string name="too_cold_for_running">Terlalu dingin untuk lari</string>
+    <string name="high_humidity_uncomfortable">Kelembapan tinggi tidak nyaman</string>
+    <string name="ideal_for_running">Ideal untuk lari</string>
+    <string name="fair_for_running">Cukup baik untuk lari</string>
+
+    <string name="rain_unsafe_for_cycling">Hujan tidak aman untuk bersepeda</string>
+    <string name="strong_wind_dangerous">Angin kencang berbahaya</string>
+    <string name="good_conditions_for_cycling">Kondisi baik untuk bersepeda</string>
+    <string name="fair_conditions_for_cycling">Kondisi cukup untuk bersepeda</string>
+
+    <string name="freezing_temperature_damages_plants">Suhu beku merusak tanaman</string>
+    <string name="storm_can_damage_plants">Badai dapat merusak tanaman</string>
+    <string name="good_time_for_gardening">Waktu yang baik untuk berkebun</string>
+    <string name="fair_conditions_for_gardening">Kondisi cukup untuk berkebun</string>
+
+    <!-- Weather Info Items -->
+    <string name="feels_like_tomorrow">Suhu besok terasa seperti</string>
+    <string name="humidity_makes_feel_like">Kelembapan membuat suhu tinggi terasa seperti %d°C</string>
+    <string name="air_humidity">Kelembapan udara</string>
+    <string name="humidity_reaches">Kelembapan mencapai %d%%</string>
+    <string name="wind_speed">Kecepatan angin</string>
+    <string name="wind_blowing">Angin bertiup %.1f m/s</string>
+    <string name="weather_condition">Kondisi cuaca</string>
+
+    <string name="healthy">Sehat</string>
+    <string name="moderate">Cukup sehat</string>
+    <string name="unhealthy_for_sensitive_groups">Tidak sehat utk kelompok sensitif</string>
+    <string name="unhealthy">Tidak sehat</string>
+    <string name="very_dry">Sangat kering</string>
+    <string name="comfortable">Nyaman</string>
+    <string name="high_humidity">Tinggi</string>
+    <string name="very_high_humidity">Sangat tinggi</string>
+    <string name="stable">Stabil</string>
+    <string name="veryhigh">Lebih tinggi</string>
+    <string name="extrem">Ekstrem</string>
+    <string name="currently_high">Saat ini tinggi</string>
+    <string name="higher_than_yesterday">Lebih tinggi dari kemarin</string>
+    <string name="lower_than_yesterday">Lebih rendah dari kemarin</string>
+    <string name="stable_like_yesterday">Stabil seperti kemarin</string>
+
+    <!-- Air Quality -->
+    <string name="air_quality_good">Kualitas udara baik untuk semua kelompok</string>
+    <string name="air_quality_moderate">Kualitas udara cukup baik</string>
+    <string name="air_quality_unhealthy_sensitive">Kelompok sensitif mungkin mengalami gangguan</string>
+    <string name="air_quality_unhealthy">Hindari aktivitas luar ruangan berkepanjangan</string>
+
+    <!-- Humidity -->
+    <string name="humidity_very_dry">Udara sangat kering, kulit butuh pelembap</string>
+    <string name="humidity_comfortable">Tingkat kelembapan ideal untuk kenyamanan</string>
+    <string name="humidity_moderate">Kelembapan cukup nyaman</string>
+    <string name="humidity_high">Udara lembap, terasa agak pengap</string>
+    <string name="humidity_very_high">Udara sangat lembap, tidak nyaman</string>
+
+    <!-- UV -->
+    <string name="uv_low">Aman tanpa perlindungan</string>
+    <string name="uv_moderate">Perlindungan diperlukan</string>
+    <string name="uv_high">Perlindungan ekstra disarankan</string>
+    <string name="uv_very_high">Hindari paparan langsung</string>
+    <string name="uv_extreme">Berbahaya, tetap di dalam ruangan</string>
+
+    <!-- Moon phases -->
+    <string name="new_moon">Bulan baru</string>
+    <string name="waxing_crescent">Bulan sabit awal</string>
+    <string name="first_quarter">Bulan paruh awal</string>
+    <string name="waxing_gibbous">Bulan cembung awal</string>
+    <string name="full_moon">Bulan purnama</string>
+    <string name="waning_gibbous">Bulan cembung akhir</string>
+    <string name="last_quarter">Bulan paruh akhir</string>
+    <string name="waning_crescent">Bulan sabit akhir</string>
+
+    <string name="amantanpaperlindungan">Aman tanpa perlindungan</string>
+    <string name="saatinitinggi">Saat ini tinggi</string>
+    <string name="lebihtinggidarikemarin">Lebih tinggi dari kemarin</string>
+    <string name="levelberbahaya">Lebih berbahaya</string>
+    <string name="lebihrendahdarikemarin">Lebih rendah dari kemarin</string>
+    <string name="stabilsepertikemarin">Stabil seperti kemarin</string>
+
+    <string name="sangatkering">Sangat kering</string>
+    <string name="nyaman">Nyaman</string>
+    <string name="udarasangatkering">Udara sangat kering, kulit membutuhkan pelembap</string>
+    <string name="tingkatkelembapan">Tingkat kelembapan ideal untuk kenyamanan</string>
+    <string name="kelembapancukupnyaman">Kelembapan cukup nyaman</string>
+    <string name="udaralembab">Udara lembap, terasa agak pengap</string>
+    <string name="udarasangatlembab">Udara sangat lembap, tidak nyaman</string>
+
+    <string name="running_description">Suhu %1$d°C, kelembapan %2$d%% - %3$s</string>
+    <string name="cycling_description">Suhu %1$d°C, angin %2$.1f km/jam - %3$s</string>
+    <string name="gardening_description">Suhu %1$d°C, kelembapan %2$d%% - %3$s</string>
+
 </resources>
