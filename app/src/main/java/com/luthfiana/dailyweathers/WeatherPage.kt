@@ -1,6 +1,7 @@
 package com.luthfiana.dailyweathers
 
 import android.content.Context
+import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -69,6 +70,9 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.ui.platform.LocalConfiguration
+import com.luthfiana.dailyweathers.api.ForecastItem
 import kotlinx.coroutines.delay
 
 data class ActivityCondition(
@@ -145,6 +149,8 @@ fun WeatherPage(viewModel: WeatherViewModel) {
     val context = LocalContext.current
 
     val adaptiveTheme = rememberAdaptiveTheme()
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
     LaunchedEffect(Unit) {
         if (weatherResult == null) {
@@ -168,62 +174,34 @@ fun WeatherPage(viewModel: WeatherViewModel) {
                 )
             )
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-        ) {
-            Spacer(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(16.dp)
-                    .background(Color.Transparent)
-            )
-
-            StickyHeader(
+        if (isLandscape) {
+            // LAYOUT LANDSCAPE - Dibagi 2 bagian
+            LandscapeLayout(
                 weatherResult = weatherResult,
+                forecastResult = forecastResult,
+                viewModel = viewModel,
+                adaptiveTheme = adaptiveTheme,
+                context = context,
                 onRefreshClick = {
                     viewModel.requestCurrentLocation(context)
                     AdaptiveColorManager.updateTheme()
                 },
-                onSearchClick = { showSearchPopup = true },
-                adaptiveTheme = adaptiveTheme,
-                context = context
+                onSearchClick = { showSearchPopup = true }
             )
-
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-
-                when (val result = weatherResult) {
-                    is NetworkResponse.Error -> {
-                        ErrorMessage(
-                            message = result.message ?: context.getString(R.string.unknown_error),
-                            adaptiveTheme = adaptiveTheme
-                        )
-                    }
-
-                    is NetworkResponse.Loading -> {
-                        LoadingIndicator(adaptiveTheme = adaptiveTheme, context = context)
-                    }
-
-                    is NetworkResponse.Success -> {
-                        WeatherDetails(
-                            data = result.data,
-                            forecastData = forecastResult,
-                            adaptiveTheme = adaptiveTheme,
-                            context = context
-                        )
-                    }
-
-                    null -> {
-                        WelcomeMessage(adaptiveTheme = adaptiveTheme, context = context)
-                    }
-                }
-            }
+        } else {
+            // LAYOUT PORTRAIT - Tetap seperti semula
+            PortraitLayout(
+                weatherResult = weatherResult,
+                forecastResult = forecastResult,
+                viewModel = viewModel,
+                adaptiveTheme = adaptiveTheme,
+                context = context,
+                onRefreshClick = {
+                    viewModel.requestCurrentLocation(context)
+                    AdaptiveColorManager.updateTheme()
+                },
+                onSearchClick = { showSearchPopup = true }
+            )
         }
 
         if (showSearchPopup) {
@@ -352,6 +330,287 @@ fun StickyHeader(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun LeftLandscapeContent(
+    modifier: Modifier = Modifier,
+    weatherResult: NetworkResponse<WeatherModel>?,
+    forecastResult: NetworkResponse<ForecastResponse>?,
+    viewModel: WeatherViewModel,
+    adaptiveTheme: AdaptiveTheme,
+    context: Context,
+    onRefreshClick: () -> Unit,
+    onSearchClick: () -> Unit
+) {
+    Column(
+        modifier = modifier
+    ) {
+        StickyHeader(
+            weatherResult = weatherResult,
+            onRefreshClick = onRefreshClick,
+            onSearchClick = onSearchClick,
+            adaptiveTheme = adaptiveTheme,
+            context = context
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        when (val result = weatherResult) {
+            is NetworkResponse.Error -> {
+                ErrorMessage(
+                    message = result.message ?: context.getString(R.string.unknown_error),
+                    adaptiveTheme = adaptiveTheme
+                )
+            }
+            is NetworkResponse.Loading -> {
+                LoadingIndicator(adaptiveTheme = adaptiveTheme, context = context)
+            }
+            is NetworkResponse.Success -> {
+                LandscapeWeatherContent(
+                    data = result.data,
+                    forecastData = forecastResult,
+                    adaptiveTheme = adaptiveTheme,
+                    context = context
+                )
+            }
+            null -> {
+                WelcomeMessage(adaptiveTheme = adaptiveTheme, context = context)
+            }
+        }
+    }
+}
+
+@Composable
+fun LandscapeWeatherContent(
+    data: WeatherModel,
+    forecastData: NetworkResponse<ForecastResponse>?,
+    adaptiveTheme: AdaptiveTheme,
+    context: Context
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .verticalScroll(rememberScrollState()),
+        horizontalAlignment = Alignment.Start
+    ) {
+        // Main Weather Card
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 0.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = Color.Transparent
+            ),
+            elevation = CardDefaults.cardElevation(0.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+            ) {
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Temperature dan icon
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Start
+                ) {
+                    val currentWeatherIcon = data.weather.firstOrNull()?.icon ?: "01d"
+                    WeatherIconMapper.LocalWeatherIcon(
+                        iconCode = currentWeatherIcon,
+                        contentDescription = "Current weather",
+                        modifier = Modifier.size(100.dp)
+                    )
+
+                    Spacer(modifier = Modifier.width(16.dp))
+
+                    Column(
+                        horizontalAlignment = Alignment.Start
+                    ) {
+                        Text(
+                            text = "${data.main.temp.toInt()}°",
+                            fontSize = 56.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = adaptiveTheme.textColor
+                        )
+
+                        val weatherDescription = data.weather.firstOrNull()?.description ?: "Unknown"
+                        Text(
+                            text = translateWeatherDescription(weatherDescription, context),
+                            fontSize = 16.sp,
+                            color = adaptiveTheme.secondaryTextColor,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                HighLowTempSeparateBoxes(
+                    highTemp = getMaxTemp(data, forecastData),
+                    lowTemp = getMinTemp(data, forecastData),
+                    adaptiveTheme = adaptiveTheme,
+                    context = context
+                )
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                WeatherInfoCard(data, adaptiveTheme, context)
+
+                Spacer(modifier = Modifier.height(24.dp))
+            }
+        }
+
+        // UV Index dan Humidity Cards
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            // UV Index Card
+            UVIndexCard(
+                modifier = Modifier.weight(1f),
+                data = data,
+                adaptiveTheme = adaptiveTheme,
+                context = context
+            )
+
+            // Humidity Card (YANG DIPERBAIKI)
+            HumidityCardImproved(
+                modifier = Modifier.weight(1f),
+                data = data,
+                adaptiveTheme = adaptiveTheme,
+                context = context
+            )
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Hourly Forecast Section
+        Text(
+            text = context.getString(R.string.weather_forecast),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Bold,
+            color = adaptiveTheme.textColor,
+            textAlign = TextAlign.Start
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        // Hourly Forecast Cards
+        when (val forecast = forecastData) {
+            is NetworkResponse.Success -> {
+                HourlyForecast(forecastData = forecast.data, adaptiveTheme = adaptiveTheme, context = context)
+            }
+            is NetworkResponse.Loading -> {
+                CircularProgressIndicator(
+                    color = adaptiveTheme.textColor,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+            else -> {
+                Text(
+                    text = context.getString(R.string.forecast_data_unavailable),
+                    color = adaptiveTheme.secondaryTextColor,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+    }
+}
+
+@Composable
+fun RightLandscapeContent(
+    modifier: Modifier = Modifier,
+    weatherResult: NetworkResponse<WeatherModel>?,
+    forecastResult: NetworkResponse<ForecastResponse>?,
+    adaptiveTheme: AdaptiveTheme,
+    context: Context
+) {
+    Column(
+        modifier = modifier
+            .verticalScroll(rememberScrollState())
+    ) {
+        when (val result = weatherResult) {
+            is NetworkResponse.Success -> {
+                LandscapeRightContent(
+                    data = result.data,
+                    forecastData = forecastResult,
+                    adaptiveTheme = adaptiveTheme,
+                    context = context
+                )
+            }
+            else -> {
+                // Placeholder untuk bagian kanan saat loading/error
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(adaptiveTheme.cardColor.copy(alpha = 0.5f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = context.getString(R.string.loading_weather_data),
+                        color = adaptiveTheme.secondaryTextColor
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun LandscapeRightContent(
+    data: WeatherModel,
+    forecastData: NetworkResponse<ForecastResponse>?,
+    adaptiveTheme: AdaptiveTheme,
+    context: Context
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 2.dp)
+            .padding(end = 16.dp)
+            // Tambahkan extra bottom padding untuk menghindari navigation bar
+            .padding(top = 26.dp), // 56.dp adalah tinggi typical navigation bar
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        // Precipitation Timeline
+        PrecipitationTimelineCard(forecastData = forecastData, adaptiveTheme = adaptiveTheme, context = context)
+
+        // Weather Info Pager
+        WeatherInfoPagerCard(
+            data = data,
+            forecast = (forecastData as? NetworkResponse.Success)?.data,
+            adaptiveTheme = adaptiveTheme,
+            context = context
+        )
+
+        // Daily Forecast
+        DailyForecastSection(forecastData, adaptiveTheme, context)
+
+        // Sun Times
+        SunTimesCard(data = data, adaptiveTheme = adaptiveTheme, context = context)
+
+        // Moon Info
+        MoonInfoCard(data = data, adaptiveTheme = adaptiveTheme, context = context)
+
+        // Activity Conditions
+        ActivityConditionsCard(data = data, forecastData = forecastData, adaptiveTheme = adaptiveTheme, context = context)
+
+        // Air Quality
+        AirQualityCard(data = data, adaptiveTheme = adaptiveTheme, context = context)
+
+        Spacer(modifier = Modifier.height(16.dp))
     }
 }
 
@@ -611,7 +870,7 @@ fun WeatherDetails(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.Start
     ) {
-        // Main Weather Card - TANPA informasi lokasi dan tanggal (karena sudah di sticky header)
+        // Main Weather Card
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -734,14 +993,13 @@ fun WeatherDetails(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // PERUBAHAN: Card IKU dipindah ke ATAS
+        // Card IKU
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            // UV Index Card
             UVIndexCard(
                 modifier = Modifier.weight(1f),
                 data = data,
@@ -749,7 +1007,6 @@ fun WeatherDetails(
                 context = context
             )
 
-            // Humidity Card
             HumidityCard(
                 modifier = Modifier.weight(1f),
                 data = data,
@@ -760,7 +1017,6 @@ fun WeatherDetails(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // PERUBAHAN: Card Fajar & Senja dan Informasi Bulan dipindah ke BAWAH card IKU
         SunTimesCard(data = data, adaptiveTheme = adaptiveTheme, context = context)
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -787,7 +1043,7 @@ fun SunTimesCard(data: WeatherModel, adaptiveTheme: AdaptiveTheme, context: Cont
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp),
+            .padding(horizontal = 8.dp),
         colors = CardDefaults.cardColors(
             containerColor = adaptiveTheme.cardColor
         ),
@@ -796,7 +1052,7 @@ fun SunTimesCard(data: WeatherModel, adaptiveTheme: AdaptiveTheme, context: Cont
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(20.dp)
+                .padding(16.dp)
         ) {
             // Header dengan icon sunrise
             Row(
@@ -817,7 +1073,7 @@ fun SunTimesCard(data: WeatherModel, adaptiveTheme: AdaptiveTheme, context: Cont
                 )
             }
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
             // Content - Fajar dan Senja dalam row dengan icon
             Row(
@@ -894,7 +1150,7 @@ fun MoonInfoCard(data: WeatherModel, adaptiveTheme: AdaptiveTheme, context: Cont
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp),
+            .padding(horizontal = 8.dp),
         colors = CardDefaults.cardColors(
             containerColor = adaptiveTheme.cardColor
         ),
@@ -903,7 +1159,7 @@ fun MoonInfoCard(data: WeatherModel, adaptiveTheme: AdaptiveTheme, context: Cont
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(20.dp)
+                .padding(16.dp)
         ) {
             // Header dengan icon bulan
             Row(
@@ -924,7 +1180,7 @@ fun MoonInfoCard(data: WeatherModel, adaptiveTheme: AdaptiveTheme, context: Cont
                 )
             }
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
             // Bulan Terbit & Terbenam dengan icon
             Row(
@@ -990,7 +1246,7 @@ fun MoonInfoCard(data: WeatherModel, adaptiveTheme: AdaptiveTheme, context: Cont
                 }
             }
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
             // Fase Bulan dengan icon bulan yang dinamis
             Row(
@@ -1121,6 +1377,208 @@ fun UVIndexCard(
                 fontSize = 12.sp,
                 color = adaptiveTheme.secondaryTextColor,
                 lineHeight = 14.sp
+            )
+        }
+    }
+}
+
+@Composable
+fun HumidityCardImproved(
+    modifier: Modifier = Modifier,
+    data: WeatherModel,
+    adaptiveTheme: AdaptiveTheme,
+    context: Context
+) {
+    val humidityData = calculateHumidityDataImproved(data, context)
+
+    Card(
+        modifier = modifier
+            .height(160.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = adaptiveTheme.cardColor
+        ),
+        shape = RoundedCornerShape(20.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
+            // Header dengan icon dan title
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.humidity),
+                    contentDescription = null,
+                    tint = adaptiveTheme.textColor,
+                    modifier = Modifier.size(20.dp)
+                )
+
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = context.getString(R.string.humidity),
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = adaptiveTheme.textColor
+                )
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Trend dan Status (TANPA PERSENTASE)
+            Column(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = humidityData.trend,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = adaptiveTheme.secondaryTextColor
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = humidityData.status,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = humidityData.statusColor
+                )
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Progress Bar
+            CustomProgressBar(
+                progress = humidityData.percentage / 100f,
+                progressColor = humidityData.statusColor,
+                adaptiveTheme = adaptiveTheme
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Description
+            Text(
+                text = humidityData.description,
+                fontSize = 12.sp,
+                color = adaptiveTheme.secondaryTextColor,
+                lineHeight = 14.sp
+            )
+        }
+    }
+}
+
+// Fungsi helper untuk humidity data yang diperbarui
+private fun calculateHumidityDataImproved(data: WeatherModel, context: Context): HumidityData {
+    val humidity = data.main.humidity
+    val yesterdayHumidity = humidity - 5 // Simulasi data kemarin
+
+    val trend = if (context.resources.configuration.locales[0].language == "id") {
+        when {
+            humidity > yesterdayHumidity + 2 -> context.getString(R.string.lebihtinggidarikemarin)
+            humidity < yesterdayHumidity - 2 -> context.getString(R.string.lebihrendahdarikemarin)
+            else -> context.getString(R.string.stabilsepertikemarin)
+        }
+    } else {
+        when {
+            humidity > yesterdayHumidity + 2 -> context.getString(R.string.lebihtinggidarikemarin)
+            humidity < yesterdayHumidity - 2 -> context.getString(R.string.lebihrendahdarikemarin)
+            else -> context.getString(R.string.stabilsepertikemarin)
+        }
+    }
+
+    val description = if (context.resources.configuration.locales[0].language == "id") {
+        when {
+            humidity <= 30 -> context.getString(R.string.udarasangatkering)
+            humidity <= 50 -> context.getString(R.string.tingkatkelembapan)
+            humidity <= 70 -> context.getString(R.string.kelembapancukupnyaman)
+            humidity <= 85 -> context.getString(R.string.udaralembab)
+            else -> context.getString(R.string.tingkatkelembapan)
+        }
+    } else {
+        when {
+            humidity <= 30 -> context.getString(R.string.udarasangatkering)
+            humidity <= 50 -> context.getString(R.string.tingkatkelembapan)
+            humidity <= 70 -> context.getString(R.string.kelembapancukupnyaman)
+            humidity <= 85 -> context.getString(R.string.udaralembab)
+            else -> context.getString(R.string.tingkatkelembapan)
+        }
+    }
+
+    return if (context.resources.configuration.locales[0].language == "id") {
+        when {
+            humidity <= 30 -> HumidityData(
+                percentage = humidity,
+                status = context.getString(R.string.sangatkering),
+                statusColor = Color(0xFFFF9800),
+                description = description,
+                trend = trend
+            )
+            humidity <= 50 -> HumidityData(
+                percentage = humidity,
+                status = context.getString(R.string.nyaman),
+                statusColor = Color(0xFF4CAF50),
+                description = description,
+                trend = trend
+            )
+            humidity <= 70 -> HumidityData(
+                percentage = humidity,
+                status = context.getString(R.string.moderate),
+                statusColor = Color(0xFFFFC107),
+                description = description,
+                trend = trend
+            )
+            humidity <= 85 -> HumidityData(
+                percentage = humidity,
+                status = context.getString(R.string.high),
+                statusColor = Color(0xFFACD5F6),
+                description = description,
+                trend = trend
+            )
+            else -> HumidityData(
+                percentage = humidity,
+                status = context.getString(R.string.veryhigh),
+                statusColor = Color(0xFFF44336),
+                description = description,
+                trend = trend
+            )
+        }
+    } else {
+        when {
+            humidity <= 30 -> HumidityData(
+                percentage = humidity,
+                status = context.getString(R.string.sangatkering),
+                statusColor = Color(0xFFFF9800),
+                description = description,
+                trend = trend
+            )
+            humidity <= 50 -> HumidityData(
+                percentage = humidity,
+                status = context.getString(R.string.nyaman),
+                statusColor = Color(0xFF4CAF50),
+                description = description,
+                trend = trend
+            )
+            humidity <= 70 -> HumidityData(
+                percentage = humidity,
+                status = context.getString(R.string.moderate),
+                statusColor = Color(0xFFFFC107),
+                description = description,
+                trend = trend
+            )
+            humidity <= 85 -> HumidityData(
+                percentage = humidity,
+                status = context.getString(R.string.high),
+                statusColor = Color(0xFFACD5F6),
+                description = description,
+                trend = trend
+            )
+            else -> HumidityData(
+                percentage = humidity,
+                status = context.getString(R.string.veryhigh),
+                statusColor = Color(0xFFF44336),
+                description = description,
+                trend = trend
             )
         }
     }
@@ -1505,13 +1963,13 @@ fun ActivityConditionsCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp),
+            .padding(horizontal = 8.dp),
         colors = CardDefaults.cardColors(
             containerColor = adaptiveTheme.cardColor
         ),
         shape = RoundedCornerShape(20.dp)
     ) {
-        Column(modifier = Modifier.padding(20.dp)) {
+        Column(modifier = Modifier.padding(16.dp)) {
 
             HorizontalPager(
                 state = pagerState,
@@ -1651,13 +2109,13 @@ fun AirQualityCard(data: WeatherModel, adaptiveTheme: AdaptiveTheme, context: Co
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp),
+            .padding(horizontal = 8.dp),
         colors = CardDefaults.cardColors(
             containerColor = adaptiveTheme.cardColor
         ),
         shape = RoundedCornerShape(20.dp)
     ) {
-        Column(modifier = Modifier.padding(20.dp)) {
+        Column(modifier = Modifier.padding(16.dp)) {
             Text(
                 text = context.getString(R.string.air_quality),
                 fontSize = 18.sp,
@@ -1712,14 +2170,14 @@ fun PrecipitationTimelineCard(forecastData: NetworkResponse<ForecastResponse>?, 
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp),
+            .padding(horizontal = 8.dp),
         colors = CardDefaults.cardColors(
             containerColor = adaptiveTheme.cardColor
         ),
         shape = RoundedCornerShape(20.dp)
     ) {
         Column(
-            modifier = Modifier.padding(20.dp)
+            modifier = Modifier.padding(16.dp)
         ) {
             Text(
                 text = context.getString(R.string.precipitation_chance),
@@ -1872,13 +2330,13 @@ fun WeatherInfoPagerCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp),
+            .padding(horizontal = 8.dp),
         colors = CardDefaults.cardColors(
             containerColor = adaptiveTheme.cardColor
         ),
         shape = RoundedCornerShape(20.dp)
     ) {
-        Column(modifier = Modifier.padding(20.dp)) {
+        Column(modifier = Modifier.padding(16.dp)) {
             HorizontalPager(
                 state = pagerState,
                 modifier = Modifier.fillMaxWidth()
@@ -1947,13 +2405,13 @@ fun DailyForecastSection(forecastData: NetworkResponse<ForecastResponse>?, adapt
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp),
+            .padding(horizontal = 8.dp),
         colors = CardDefaults.cardColors(
             containerColor = adaptiveTheme.cardColor
         ),
         shape = RoundedCornerShape(20.dp)
     ) {
-        Column(modifier = Modifier.padding(20.dp)) {
+        Column(modifier = Modifier.padding(16.dp)) {
             Text(
                 text = context.getString(R.string.daily_forecast),
                 fontSize = 18.sp,
@@ -2045,7 +2503,9 @@ fun HourlyForecast(forecastData: ForecastResponse, adaptiveTheme: AdaptiveTheme,
     }.take(8)
 
     LazyRow(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         items(upcomingForecasts) { forecastItem ->
@@ -2661,30 +3121,25 @@ fun generateWeatherInfoItems(
     )
 }
 
-
-
-// Fungsi untuk menerjemahkan deskripsi cuaca
 private fun translateWeatherDescription(description: String, context: Context): String {
-    return if (context.resources.configuration.locales[0].language == "id") {
-        when {
-            description.contains("clear", ignoreCase = true) -> context.getString(R.string.clear_sky)
-            description.contains("few clouds", ignoreCase = true) -> context.getString(R.string.few_clouds)
-            description.contains("scattered clouds", ignoreCase = true) -> context.getString(R.string.scattered_clouds)
-            description.contains("broken clouds", ignoreCase = true) -> context.getString(R.string.broken_clouds)
-            description.contains("overcast clouds", ignoreCase = true) -> context.getString(R.string.overcast_clouds)
-            description.contains("light rain", ignoreCase = true) -> context.getString(R.string.light_rain)
-            description.contains("moderate rain", ignoreCase = true) -> context.getString(R.string.moderate_rain)
-            description.contains("heavy rain", ignoreCase = true) -> context.getString(R.string.heavy_rain)
-            description.contains("thunderstorm", ignoreCase = true) -> context.getString(R.string.thunderstorm)
-            description.contains("snow", ignoreCase = true) -> context.getString(R.string.snow)
-            description.contains("mist", ignoreCase = true) -> context.getString(R.string.mist)
-            else -> description
-        }
-    } else {
-        description // Untuk English, kembalikan deskripsi asli
+    return when {
+        description.contains("clear", ignoreCase = true) -> context.getString(R.string.clear_sky)
+        description.contains("few clouds", ignoreCase = true) -> context.getString(R.string.few_clouds)
+        description.contains("scattered clouds", ignoreCase = true) -> context.getString(R.string.scattered_clouds)
+        description.contains("broken clouds", ignoreCase = true) -> context.getString(R.string.broken_clouds)
+        description.contains("overcast clouds", ignoreCase = true) -> context.getString(R.string.overcast_clouds)
+        description.contains("light rain", ignoreCase = true) -> context.getString(R.string.light_rain)
+        description.contains("moderate rain", ignoreCase = true) -> context.getString(R.string.moderate_rain)
+        description.contains("heavy rain", ignoreCase = true) -> context.getString(R.string.heavy_rain)
+        description.contains("thunderstorm", ignoreCase = true) -> context.getString(R.string.thunderstorm)
+        description.contains("snow", ignoreCase = true) -> context.getString(R.string.snow)
+        description.contains("mist", ignoreCase = true) -> context.getString(R.string.mist)
+        description.contains("shower rain", ignoreCase = true) -> context.getString(R.string.light_rain)
+        description.contains("rain", ignoreCase = true) -> context.getString(R.string.moderate_rain)
+        description.contains("cloud", ignoreCase = true) -> context.getString(R.string.scattered_clouds)
+        else -> description
     }
 }
-
 // Fungsi untuk menerjemahkan fase bulan
 private fun translateMoonPhase(moonPhase: String, context: Context): String {
     return if (context.resources.configuration.locales[0].language == "id") {
@@ -3101,6 +3556,122 @@ fun ErrorMessage(message: String, adaptiveTheme: AdaptiveTheme) {
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(horizontal = 32.dp)
         )
+    }
+}
+
+@Composable
+fun LandscapeLayout(
+    weatherResult: NetworkResponse<WeatherModel>?,
+    forecastResult: NetworkResponse<ForecastResponse>?,
+    viewModel: WeatherViewModel,
+    adaptiveTheme: AdaptiveTheme,
+    context: Context,
+    onRefreshClick: () -> Unit,
+    onSearchClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 8.dp, vertical = 8.dp)
+    ) {
+        // BAGIAN KIRI - 50%
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight()
+        ) {
+            LeftLandscapeContent(
+                modifier = Modifier
+                    .fillMaxSize(),
+                weatherResult = weatherResult,
+                forecastResult = forecastResult,
+                viewModel = viewModel,
+                adaptiveTheme = adaptiveTheme,
+                context = context,
+                onRefreshClick = onRefreshClick,
+                onSearchClick = onSearchClick
+            )
+        }
+
+        Spacer(modifier = Modifier.width(8.dp))
+
+        // BAGIAN KANAN - 50%
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight()
+        ) {
+            RightLandscapeContent(
+                modifier = Modifier
+                    .fillMaxSize(),
+                weatherResult = weatherResult,
+                forecastResult = forecastResult,
+                adaptiveTheme = adaptiveTheme,
+                context = context
+            )
+        }
+    }
+}
+
+@Composable
+fun PortraitLayout(
+    weatherResult: NetworkResponse<WeatherModel>?,
+    forecastResult: NetworkResponse<ForecastResponse>?,
+    viewModel: WeatherViewModel,
+    adaptiveTheme: AdaptiveTheme,
+    context: Context,
+    onRefreshClick: () -> Unit,
+    onSearchClick: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        Spacer(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(16.dp)
+                .background(Color.Transparent)
+        )
+
+        StickyHeader(
+            weatherResult = weatherResult,
+            onRefreshClick = onRefreshClick,
+            onSearchClick = onSearchClick,
+            adaptiveTheme = adaptiveTheme,
+            context = context
+        )
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            when (val result = weatherResult) {
+                is NetworkResponse.Error -> {
+                    ErrorMessage(
+                        message = result.message ?: context.getString(R.string.unknown_error),
+                        adaptiveTheme = adaptiveTheme
+                    )
+                }
+                is NetworkResponse.Loading -> {
+                    LoadingIndicator(adaptiveTheme = adaptiveTheme, context = context)
+                }
+                is NetworkResponse.Success -> {
+                    WeatherDetails(
+                        data = result.data,
+                        forecastData = forecastResult,
+                        adaptiveTheme = adaptiveTheme,
+                        context = context
+                    )
+                }
+                null -> {
+                    WelcomeMessage(adaptiveTheme = adaptiveTheme, context = context)
+                }
+            }
+        }
     }
 }
 
